@@ -2,16 +2,13 @@ package com.example.testappforse
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.testappforse.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.net.HttpURLConnection
 import java.net.URL
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,30 +16,31 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*  A test data sampler if we cannot get the url working for some reason
-            In that case, skip the retrieveJson func and just use parse with this data
-
-        val jsonData = """{
-        "productID": "12345",
-        "productName": "Example Product",
-        "quantity": "10",
-        "catID": "6789",
-        "img": "example.jpg"
-         }"""
-         */
-
-        val jsonStr = retrieveJsonFromUrl()
-        val data = parseJsonToDataModel(jsonStr)
-        //TODO: (ADD) Check a shared preferences for a list of added items and quantities
-        //TODO: (ADD) Populate the screen with the list of items
-        //TODO: (REMOVE) Either add a swipe to delete functionality or some kind of multi-select to delete
-        //TODO: (REMOVE) Create a Recyler View for all the data objects gained from Add
-        //TODO: (CHECKOUT) Connect to the database to checkout the items
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //val jsonStr = retrieveJsonFromUrl()
+        //val data = parseJsonToDataModel(jsonStr)
+
+        val data = getTestDataModel()
+
+        val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val adapter = ItemAdapter(data)
+        recyclerView.adapter = adapter
+
+
+        //TODO: (Open) Should show only 2 buttons, one for add and one for checkout
+        //TODO: (Gio) Add should go to its own fragment where you can select from items in the data
+        //TODO: (Gio) Add should return to the main activity and put the added items into the recycler view (try using shared preferences w/ Strings and put those strings into the parseJsonToDataModel function I made)
+        //TODO: (Toma) Add swipe to delete functionality to the recylcer view. It should decrease the quantity by 1 and if it hits 0, remove the item from the cart
+        //TODO: (Open) Checkout should delete all of the items from the cart
+        //TODO: (Open) Checkout should also access the database itself to modify the data there when called
+
+        /*
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
@@ -53,7 +51,15 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+         */
     }
+    private fun getTestDataModel(): List<DataModel> {
+        return listOf(
+            DataModel("12345", "Example Product 1", "10", "6789", "example1.jpg"),
+            DataModel("67890", "Example Product 2", "20", "1234", "example2.jpg")
+        )
+    }
+
 }
 
 data class DataModel(
@@ -71,9 +77,9 @@ fun retrieveJsonFromUrl(): String {
 
     return connection.inputStream.bufferedReader().use { it.readText() }
 }
-
-fun parseJsonToDataModel(jsonData: String): DataModel {
+fun parseJsonToDataModel(jsonData: String): List<DataModel> {
     val gson = Gson()
-    return gson.fromJson(jsonData, DataModel::class.java)
-}
-
+    val listType = object : TypeToken<List<DataModel>>() {}.type
+    val dataModels = gson.fromJson<List<DataModel>>(jsonData, listType)
+    println(dataModels) //error checking
+    return dataModels}
