@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemAdapter(private val items: List<DataModel>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(private val items: MutableList<DataModel>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTextView: TextView = itemView.findViewById(R.id.name_text_view)
@@ -37,4 +37,10 @@ class ItemAdapter(private val items: List<DataModel>) : RecyclerView.Adapter<Ite
     override fun getItemCount(): Int {
         return items.size
     }
+
+    fun removeItem(position: Int) {
+        items.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
 }

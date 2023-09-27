@@ -2,6 +2,7 @@ package com.example.testappforse
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testappforse.databinding.ActivityMainBinding
@@ -34,6 +35,16 @@ class MainActivity : AppCompatActivity() {
         //TODO: (Gio) Add should go to its own fragment where you can select from items in the data
         //TODO: (Gio) Add should return to the main activity and put the added items into the recycler view (try using shared preferences w/ Strings and put those strings into the parseJsonToDataModel function I made)
         //TODO: (Toma) Add swipe to delete functionality to the recylcer view. It should decrease the quantity by 1 and if it hits 0, remove the item from the cart
+        val swipeHandler = object : SwipeToDeleteCallback(adapter) {
+            override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                return super.getSwipeDirs(recyclerView, viewHolder)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+
+
         //TODO: (Open) Checkout should delete all of the items from the cart
         //TODO: (Open) Checkout should also access the database itself to modify the data there when called
 
@@ -53,8 +64,8 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
          */
     }
-    private fun getTestDataModel(): List<DataModel> {
-        return listOf(
+    private fun getTestDataModel(): MutableList<DataModel> {
+        return mutableListOf(
             DataModel("12345", "Example Product 1", "10", "6789", "example1.jpg"),
             DataModel("67890", "Example Product 2", "20", "1234", "example2.jpg")
         )
