@@ -8,10 +8,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.testappforse.databinding.ActivityMainBinding
-import android.view.View
-import android.widget.Button
-import android.widget.GridLayout
-import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
