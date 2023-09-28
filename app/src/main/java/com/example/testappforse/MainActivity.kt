@@ -1,6 +1,11 @@
 package com.example.testappforse
 
 import android.os.Bundle
+import android.telephony.TelephonyCallback.DataActivityListener
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +19,7 @@ import java.net.URL
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var adapter: ItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = ItemAdapter(data)
+        adapter = ItemAdapter(data)
         recyclerView.adapter = adapter
 
 
@@ -70,6 +76,37 @@ class MainActivity : AppCompatActivity() {
             DataModel("67890", "Example Product 2", "20", "1234", "example2.jpg")
         )
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_checkout -> {
+                // Add code for checkout action here
+                // This is where you'll handle deleting all items
+                val data = adapter.getData()
+
+                if(data.isNotEmpty()) {
+                    Toast.makeText(this, "Checkout!", Toast.LENGTH_SHORT).show()
+                    deleteAllItems(data);
+                }
+                else{
+                    Toast.makeText(this, "Cart is empty", Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+    fun deleteAllItems(data: MutableList<DataModel>) {
+        data.clear()
+        adapter.notifyDataSetChanged()
+        // Add any additional logic you need after deleting items
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.checkout, menu)
+        return true
+    }
+
 
 }
 

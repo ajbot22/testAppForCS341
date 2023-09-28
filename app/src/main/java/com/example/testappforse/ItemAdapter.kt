@@ -43,4 +43,8 @@ class ItemAdapter(private val items: MutableList<DataModel>) : RecyclerView.Adap
         notifyItemRemoved(position)
     }
 
+    fun getData(): MutableList<DataModel> {
+        return items
+    }
+
 }
